@@ -10,6 +10,9 @@ class Verifier
     private $result = array();
     private $_connection = null;
 
+    const SMTP_CONNECT_SUCCESS = 220;
+    const SMTP_QUIT_SUCCESS    = 221;
+    const SMTP_GENERIC_SUCCESS = 250;
 
     /**
      * Verifier constructor.
@@ -196,7 +199,7 @@ class Verifier
             throw new \Exception("($host): Error: $errCode, message: $errStr.");
         }
         $this->_connection = $connection;
-        $this->getResponseFromSocket(220);
+        $this->getResponseFromSocket(self::SMTP_CONNECT_SUCCESS);
     }
 
     /**
@@ -216,7 +219,7 @@ class Verifier
     private function ehlo()
     {
         $this->send("EHLO user.domain");
-        $this->getResponseFromSocket(250);
+        $this->getResponseFromSocket(self::SMTP_GENERIC_SUCCESS);
     }
 
     /**
@@ -227,7 +230,7 @@ class Verifier
     private function mailFrom()
     {
         $this->send("MAIL FROM:<user@domain.local>");
-        $this->getResponseFromSocket(250);
+        $this->getResponseFromSocket(self::SMTP_GENERIC_SUCCESS);
     }
 
     /**
@@ -239,7 +242,7 @@ class Verifier
     private function rcpt($mail)
     {
         $this->send("RCPT TO:<$mail>");
-        $this->getResponseFromSocket(250);
+        $this->getResponseFromSocket(self::SMTP_GENERIC_SUCCESS);
     }
 
     /**
@@ -250,7 +253,7 @@ class Verifier
     private function reset()
     {
         $this->send("RSET");
-        $this->getResponseFromSocket(250);
+        $this->getResponseFromSocket(self::SMTP_GENERIC_SUCCESS);
     }
 
     /**
@@ -261,7 +264,7 @@ class Verifier
     private function quit()
     {
         $this->send("QUIT");
-        $this->getResponseFromSocket(221);
+        $this->getResponseFromSocket(self::SMTP_QUIT_SUCCESS);
     }
 
     /**
